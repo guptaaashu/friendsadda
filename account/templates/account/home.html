@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block 'additional_includes' %}
+<link rel="stylesheet" href="{% static 'home.css' %}">
+{% endblock %}
+{% block content %}
+<h1>Things Going Around You</h1>
+<div class="row">
+	<div class="col-sm-1"></div>
+	<div class="col-sm-8">
+		{% for action in actions %}
+		<div class="fir">
+		<ul>
+		{% with user=action.user profile=action.user.profile %}
+		<li>
+		<div class="images">
+				{% if profile.photo %}
+				<img src="{{ user.profile.photo.url }}" alt="{{ user.get_full_name }}"class="img-circle" width="250" height="236">
+				</a>
+				{% endif %}
+				{% if action.target %}
+				{% with target=action.target %}
+				{% if target.image %}
+				<img src="{{ im.url }}" class="item-img">
+				{% endif %}
+				{% endwith %}
+				{% endif %}
+		</div>
+		</li>
+		<li>
+		<p>
+		<span class="date">{{ action.created|timesince }} ago</span>
+		<br />
+		<div class="sec">
+		<a href={% url 'user_detail' pk=user.id %}>{{ user.first_name }}</a>
+		{{ action.verb }}
+		{% if action.target %}
+		{% with target=action.target %}
+		<a href="{{ target.get_absolute_url }}">{{ target }}</a>
+		{% endwith %}
+		{% endif %}
+		</div>
+		</p>
+		</li>
+		{% endwith %}
+		</ul>
+		</div>
+		{% endfor %}
+	</div>
+	<div class="col-sm-1"></div>
+</div>
+{% endblock %}

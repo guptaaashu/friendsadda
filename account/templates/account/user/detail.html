@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ user.get_full_name }}{% endblock %}
+{% block 'additional_includes' %}
+<link rel="stylesheet" href="{% static 'list.css' %}">
+{% endblock %}
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src=" http://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.min.js "></script>
+<script>
+var csrftoken = $.cookie('csrftoken');
+function csrfSafeMethod(method) {
+// these HTTP methods do not require CSRF protection
+return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+beforeSend: function(xhr, settings) {
+if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+xhr.setRequestHeader("X-CSRFToken", csrftoken);
+}
+}
+});
+$(document).ready(function(){
+$('a.follow').click(function(e){
+e.preventDefault();
+$.post('{% url "user_follow" %}',
+{
+id: $(this).data('id'),
+action: $(this).data('action')
+},
+function(data){
+if (data['status'] == 'ok') {
+var previous_action = $('a.follow').data('action');
+$('a.follow').data('action',previous_action == 'follow' ? 'unfollow' : 'follow');
+$('a.follow').text(previous_action == 'follow' ? 'Unfollow' : 'Follow');
+var previous_followers = parseInt(
+$('span.count .total').text());
+$('span.count .total').text(previous_action == 'follow' ?previous_followers + 1 : previous_followers - 1);
+}
+}
+);
+});
+    $("h1").click(function(){
+        $(this).hide();
+    });
+});
+</script>
+<div class="row">
+	<div class="col-sm-3">
+		<h1>{{ user.get_full_name }}</h1>
+		<div class="profile-info">
+		<img src="{{ user.profile.photo.url }}" class="img-circle" width="304" height="236">
+		</div>
+		<div class="follow">
+		<h2><a href="{% url "followers" pk=user.id %}">follower</a></h2><br/>
+		<h2><a href="{% url "following" pk=user.id %}">following</a></h2>
+		</div>
+	</div>
+	<div class="col-sm-8">
+		{% with total_followers=user.followers.count %}
+		<span class="count">
+		<span class="total">{{ total_followers }}</span>
+		follower{{ total_followers|pluralize }}
+		</span>
+		{% ifnotequal request.user user%}
+		<a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button" align="right">
+		{% if request.user not in user.followers.all %}
+		Follow
+		{% else %}
+		Unfollow
+		{% endif %}
+		</a>
+		{% endifnotequal %}
+		{% with images=user.images_created.all %}
+		<h1>Images bookmarked</h1>
+		<div class="image-list">
+			{% for image in images %}
+			<div class="image">
+				<a href="{{ image.get_absolute_url }}">
+				<img src="{{ image.image.url }}" class="img-rounded" width="250" height="236">		
+				</a>
+				<div class="info">
+					<a href="{{ image.get_absolute_url }}" class="title">
+					{{ image.title }}
+					</a>
+				</div>
+			</div>
+			{%  endfor %}
+		</div>
+		{% endwith %}
+		{% endwith %}	
+	</div>
+	<div class="col-sm-1"></div>
+</div>
+{% endblock %}

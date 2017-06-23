@@ -1,0 +1,30 @@
+body {
+margin: 0;
+padding: 0;
+}
+.header {
+color: White;
+position: relative;
+top: 30px;
+font-size: 55px;
+}
+.container  {
+background-color: #242b32;
+height: 160px;
+width: 100%;
+}
+.list {
+position: relative;
+top: 60px;
+font-size: 20px;
+display : inline-block;
+}
+.list1 {
+position: relative;
+top: 40px;
+}
+footer { 
+background-color: #555;
+color: white;
+padding: 15px;
+}

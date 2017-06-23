@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Log-in{% endblock %}
+{% block content %}
+{% if request.user.is_authenticated %}
+<h1>You are already logged in.</h1>
+{% else %}
+<h1>Log-in</h1>
+<p>Please, use the following form to log-in:</p>
+<form action="." method="post">
+<div class="form-group">
+{{ form.as_p }}
+{% csrf_token %}
+</div>
+<p><input type="submit" value="Log-in"></p>
+</form>
+<p>Not registered yet,<a href="{% url "register" %}"> Register</a> here</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Followers{% endblock %}
+{% load static %}
+{% block 'additional_includes' %}
+<link rel="stylesheet" href="{% static 'list.css' %}">
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-sm-1"></div>
+	<div class="col-sm-9">
+		<h1>Following</h1>
+		<div id="people-list">
+		{% for follow in following %}
+		<div class="user">
+		<a href="{{ follow.get_absolute_url }}">
+		<img src="{{ follow.profile.photo.url }}" class="img-rounded" width="304" height="236">
+		</a>
+		<div class="info">
+		<a href="{{ follow.get_absolute_url }}" class="title">
+		{{ follow.get_full_name }}
+		</a>
+		</div>
+		</div>
+		{% endfor %}
+		</div>
+	</div>
+	<div class="col-sm-2"></div>
+</div>
+{% endblock %}
